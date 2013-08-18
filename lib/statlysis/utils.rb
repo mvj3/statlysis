@@ -35,6 +35,10 @@ module Statlysis
         {:table => tn, :model => str.constantize}
       end
 
+      def normalise_name name
+        Array(name).map {|s| s.to_s.gsub('_','') }.reject {|s| s.blank? }.join('_').downcase
+      end
+
     end
   end
 end
