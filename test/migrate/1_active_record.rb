@@ -4,5 +4,6 @@ class CreateActiveRecord < ActiveRecord::Migration
     t.integer :user_id
     t.timestamps
     t.string :author
+    t.integer :fav_count
   end
 end

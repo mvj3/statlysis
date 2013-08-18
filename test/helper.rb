@@ -35,13 +35,13 @@ Dir[File.expand_path("../models/*.rb", __FILE__).to_s].each { |f| require f }
 # copied from http://stackoverflow.com/questions/4410794/ruby-on-rails-import-data-from-a-csv-file/4410880#4410880
 require 'csv'
 csv = CSV.parse(File.read(File.expand_path('../data/code_gists_20130724.csv', __FILE__)), :headers => true) # data from code.eoe.cn
-csv.each {|row| CodeGist.create!(row.to_hash) }
+csv.each {|row| CodeGist.create!(row.to_hash.merge(:fav_count => rand(5).to_i)) }
 
 
 Statlysis.setup do
   hourly EoeLog, :time_column => :t
 
-  daily  CodeGist
+  daily  CodeGist, :sum_columns => [:fav_count]
 
   [EoeLog,
    EoeLog.where(:do => 3),
@@ -50,6 +50,7 @@ Statlysis.setup do
   ].each do |s|
     daily s, :time_column => :t
   end
-  cron = Statlysis.daily['mul'][1]
+  cron1 = Statlysis.daily['mul'][1]
+  cron2 = Statlysis.daily['cod'][0]
   require 'pry-debugger';binding.pry
 end
