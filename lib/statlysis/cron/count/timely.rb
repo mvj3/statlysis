@@ -44,6 +44,10 @@ module Statlysis
           end
         end
       end
+      # add group_concat column
+      if cron.group_concat_columns.any? && cron.stat_model.columns.include?(:other_json)
+        Statlysis.sequel.add_column cron.stat_table_name, :other_json, Text
+      end
 
       cron.stat_model
     end
@@ -77,12 +81,20 @@ module Statlysis
             _hash[_result_cols[1]] = _scope_all.map(&_sum_col).reduce(:+).to_f
           end
 
+          # 3. group_concat
+          _other_json = {}
+          _other_json[:group_concat_columns] ||= {}
+          cron.group_concat_columns.each do |_group_concat_column|
+            _other_json[:group_concat_columns][_group_concat_column] = _scope_one.map(&_group_concat_column).uniq
+          end
+          _hash[:other_json] = _other_json.to_json
+
           _first_source ||= s.where(unit_range_query(time))
         end
         logger.info "#{time.in_time_zone(cron.time_zone)} multiple_dataset:#{cron.multiple_dataset.name} _first_source:#{_first_source.inspect} timely_c:#{_hash[:timely_c]} totally_c:#{_hash[:totally_c]}" if ENV['DEBUG']
 
         _hash
-      end.select {|r1| r1.except(:t).values.reject {|r2| r2.zero? }.any? })
+      end.select {|r1| r1.except(:t, :other_json).values.reject {|r2| r2.zero? }.any? })
     end
 
     private
