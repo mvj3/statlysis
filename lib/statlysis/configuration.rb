@@ -59,7 +59,7 @@ module Statlysis
 
     def timely source, opts
       self.check_set_database
-      opts.reverse_merge! :time_column => :created_at, :time_unit => :day, :sum_columns => []
+      opts.reverse_merge! :time_column => :created_at, :time_unit => :day, :sum_columns => [], :group_concat_columns => []
       t = Timely.new source, opts
       self.send("#{opts[:time_unit]}_crons").push t
     end

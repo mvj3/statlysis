@@ -2,12 +2,13 @@
 
 module Statlysis
   class Count < Cron
-    attr_reader :sum_columns
+    SqlColumns = [:sum_columns, :group_concat_columns]
+    attr_reader(*SqlColumns)
 
     def initialize source, opts = {}
       super
       Statlysis.check_set_database
-      @sum_columns = opts[:sum_columns] || []
+      SqlColumns.each {|sym| instance_variable_set "@#{sym}", (opts[sym] || []) }
       cron.setup_stat_model
       cron
     end

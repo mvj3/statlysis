@@ -86,6 +86,7 @@ module Statlysis
     end
 
     private
+    # e.g. {:fav_count=>[:timely_favcount_s, :totally_favcount_s]}
     def sum_column_to_result_columns_hash
       cron.sum_columns.inject({}) do |h, _col|
         [:timely, :totally].each do |_pre|

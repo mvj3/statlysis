@@ -41,7 +41,7 @@ csv.each {|row| CodeGist.create!(row.to_hash.merge(:fav_count => rand(5).to_i)) 
 Statlysis.setup do
   hourly EoeLog, :time_column => :t
 
-  daily  CodeGist, :sum_columns => [:fav_count]
+  daily  CodeGist, :sum_columns => [:fav_count], :group_concat_columns => [:user_id]
 
   [EoeLog,
    EoeLog.where(:do => 3),
