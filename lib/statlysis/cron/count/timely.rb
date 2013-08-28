@@ -45,8 +45,8 @@ module Statlysis
         end
       end
       # add group_concat column
-      if cron.group_concat_columns.any? && cron.stat_model.columns.include?(:other_json)
-        Statlysis.sequel.add_column cron.stat_table_name, :other_json, Text
+      if cron.group_concat_columns.any? && !cron.stat_model.columns.include?(:other_json)
+        Statlysis.sequel.add_column cron.stat_table_name, :other_json, :text
       end
 
       cron.stat_model
