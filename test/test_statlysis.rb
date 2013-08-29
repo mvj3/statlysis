@@ -9,7 +9,7 @@ class TestStatlysis < Test::Unit::TestCase
 
   def test_setup_count_stat_table
     eval("class CodeGist < ActiveRecord::Base; end")
-    t = Statlysis::Timely.new CodeGist.where(:user_id => 470700), :time_column => :created_at, :time_unit => :day
+    t = Statlysis::OneDimension.new CodeGist.where(:user_id => 470700), :time_column => :created_at, :time_unit => :day
     t.setup_stat_model
     is_created = Statlysis.sequel.table_exists?(t.stat_table_name)
     Statlysis.sequel.drop_table t.stat_table_name

@@ -78,5 +78,5 @@ module Statlysis
 end
 
 
-require 'statlysis/cron/count'
+require 'statlysis/cron/timely'
 require 'statlysis/cron/top'

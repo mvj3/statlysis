@@ -42,6 +42,8 @@ Statlysis.setup do
   hourly EoeLog, :time_column => :t
 
   daily  CodeGist, :sum_columns => [:fav_count], :group_concat_columns => [:user_id]
+  always CodeGist, :group_by_columns => [{:column_name => :author, :type => :string}],
+                   :group_concat_columns => [:user_id]
 
   [EoeLog,
    EoeLog.where(:do => 3),
