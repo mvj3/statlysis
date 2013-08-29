@@ -94,12 +94,23 @@ module Statlysis
     private
     def timely source, opts
       self.check_set_database
-      opts.reverse_merge! :time_column => :created_at, :time_unit => :day, :sum_columns => [], :group_concat_columns => []
-      t = Timely.new source, opts
-      opts[:time_unit] = 'always' if not opts[:time_unit]
-      self.send("#{opts[:time_unit]}_crons").push t
-    end
 
+      opts.reverse_merge! :time_column => :created_at,
+                          :time_unit => :day,
+                          :sum_columns => [],
+                          :group_by_columns => [],
+                          :group_concat_columns => []
+
+      opts.each {|k, v| opts[k] = v.map(&:to_sym) if k.to_s.match(/column/) } # Sequel use symbol as column names
+
+      # e.g. convert [:user_id] to [{:column_name => :user_id, :type => :integer}]
+      if (opts[:group_by_columns].first || {})[:type].blank?
+        opts[:group_by_columns] = opts[:group_by_columns].map {|i| {:column_name => i, :type => :integer} }
+      end
+
+      t = Timely.new source, opts
+      self.send("#{opts[:time_unit] || 'always'}_crons").push t
+    end
 
   end
 end
