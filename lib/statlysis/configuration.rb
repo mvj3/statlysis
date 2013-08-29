@@ -116,8 +116,7 @@ module Statlysis
         opts[:group_by_columns] = opts[:group_by_columns].map {|i| {:column_name => i.to_sym, :type => :integer} }
       end
 
-      # TODO auto judge dimension in Timely
-      t = (opts[:group_by_columns].any? ? MultipleDimension : OneDimension).new source, opts
+      t = Timely.new source, opts
       self.send("#{opts[:time_unit] || 'always'}_crons").push t
     end
 

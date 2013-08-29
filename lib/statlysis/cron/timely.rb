@@ -97,6 +97,10 @@ module Statlysis
       cron.stat_model
     end
 
+    def output
+      @output ||= (cron.group_by_columns.any? ? multiple_dimension_output : one_dimension_output)
+    end
+
     protected
     def unit_range_query time, time_begin = nil
       # time begin and end

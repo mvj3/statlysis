@@ -1,9 +1,11 @@
 # encoding: UTF-8
 
 module Statlysis
-  class OneDimension < Timely
-    def output
-      @output ||= (cron.time_range.map do |time|
+  class Timely
+
+
+    def one_dimension_output
+      cron.time_range.map do |time|
         _hash = {:t => time, :timely_c => 0, :totally_c => 0}
         sum_column_to_result_columns_hash.each do |_sum_col, _result_cols|
           _result_cols.each do |_result_col|
@@ -44,9 +46,8 @@ module Statlysis
         logger.info "#{time.in_time_zone(cron.time_zone)} multiple_dataset:#{cron.multiple_dataset.name} _first_source:#{_first_source.inspect} timely_c:#{_hash[:timely_c]} totally_c:#{_hash[:totally_c]}" if ENV['DEBUG']
 
         _hash
-      end.select {|r1| r1.except(:t, :other_json).values.reject {|r2| r2.zero? }.any? })
+      end.select {|r1| r1.except(:t, :other_json).values.reject {|r2| r2.zero? }.any? }
     end
-
 
 
   end

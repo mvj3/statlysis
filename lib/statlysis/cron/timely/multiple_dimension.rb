@@ -1,7 +1,13 @@
 # encoding: UTF-8
 
 module Statlysis
-  class MultipleDimension < Timely
+  class Timely
+
+
+    def multiple_dimension_output
+    end
+
 
   end
 end
+ 
