@@ -2,7 +2,7 @@
 
 module Statlysis
   class Count < Cron
-    SqlColumns = [:sum_columns, :group_concat_columns]
+    SqlColumns = [:sum_columns, :group_by_columns, :group_concat_columns]
     attr_reader(*SqlColumns)
 
     def initialize source, opts = {}
@@ -52,4 +52,3 @@ end
 
 
 require 'statlysis/cron/count/timely'
-require 'statlysis/cron/count/dimensions'

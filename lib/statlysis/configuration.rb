@@ -48,16 +48,7 @@ module Statlysis
 
     def daily  source, opts = {}; timely source, {:time_unit => :day }.merge(opts) end
     def hourly source, opts = {}; timely source, {:time_unit => :hour}.merge(opts) end
-    def always source, opts = {}; timely source, {:time_unit => false}.merge(opts) end
-
-
-    def timely source, opts
-      self.check_set_database
-      opts.reverse_merge! :time_column => :created_at, :time_unit => :day, :sum_columns => [], :group_concat_columns => []
-      t = Timely.new source, opts
-      opts[:time_unit] = 'always' if not opts[:time_unit]
-      self.send("#{opts[:time_unit]}_crons").push t
-    end
+    def always source, opts = {}; timely source, {:time_unit => false}.merge(opts) end # IMPORTANT set :time_unit to false
 
     # the real requirement is to compute lastest items group by special pattens, like user_id, url prefix, ...
     def lastest_visits source, opts
@@ -95,6 +86,17 @@ module Statlysis
 
       self.similar_crons.push Similar.new(model_name, _p)
     end
+
+
+    private
+    def timely source, opts
+      self.check_set_database
+      opts.reverse_merge! :time_column => :created_at, :time_unit => :day, :sum_columns => [], :group_concat_columns => []
+      t = Timely.new source, opts
+      opts[:time_unit] = 'always' if not opts[:time_unit]
+      self.send("#{opts[:time_unit]}_crons").push t
+    end
+
 
   end
 end
