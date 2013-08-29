@@ -27,6 +27,7 @@ module Statlysis
         end
       end
 
+      # TODO reassign columns added recently
       n = cron.stat_table_name.to_s.singularize.camelize
       cron.stat_model = class_eval <<-MODEL, __FILE__, __LINE__+1
         class ::#{n} < Sequel::Model;

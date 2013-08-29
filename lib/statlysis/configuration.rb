@@ -9,12 +9,11 @@ module Statlysis
   class Configuration
     include Singleton
 
+    # variables
     attr_accessor :sequel, :default_time_columns, :default_time_zone, :database_opts, :tablename_default_pre
     attr_accessor :is_skip_database_index
-    TimeUnits.each {|unit| module_eval "attr_accessor :#{unit}_crons; self.instance.#{unit}_crons = []" }
-    [:realtime, :similar, :hotest].each do |sym|
-      sym = "#{sym}_crons"
-      attr_accessor sym; self.instance.send "#{sym}=", []
+    (TimeUnits + %W[always] + [:realtime, :similar, :hotest]).each do |unit|
+      sym = "#{unit}_crons"; attr_accessor sym; self.instance.send "#{sym}=", []
     end
     self.instance.send "tablename_default_pre=", "st"
     self.instance.send "is_skip_database_index=", false
@@ -43,24 +42,20 @@ module Statlysis
       return self
     end
 
-    def set_default_time_zone zone
-      self.default_time_zone = zone
-      return self
-    end
-
-    def set_tablename_default_pre str
-      self.tablename_default_pre = str.to_s
-    end
+    def set_default_time_zone zone; self.default_time_zone = zone; return self; end
+    def set_tablename_default_pre str; self.tablename_default_pre = str.to_s; return self end
+    def check_set_database; raise "Please setup database first" if sequel.nil?  end
 
     def daily  source, opts = {}; timely source, {:time_unit => :day }.merge(opts) end
     def hourly source, opts = {}; timely source, {:time_unit => :hour}.merge(opts) end
+    def always source, opts = {}; timely source, {:time_unit => false}.merge(opts) end
 
-    def check_set_database; raise "Please setup database first" if sequel.nil?  end
 
     def timely source, opts
       self.check_set_database
       opts.reverse_merge! :time_column => :created_at, :time_unit => :day, :sum_columns => [], :group_concat_columns => []
       t = Timely.new source, opts
+      opts[:time_unit] = 'always' if not opts[:time_unit]
       self.send("#{opts[:time_unit]}_crons").push t
     end
 
