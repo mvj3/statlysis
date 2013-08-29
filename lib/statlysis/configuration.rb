@@ -33,15 +33,23 @@ module Statlysis
       else
         raise "Statlysis#set_database only support symbol or hash params"
       end
-      # create database, copied from http://stackoverflow.com/a/14435522/595618
-      mysql2_client = Mysql2::Client.new(self.database_opts.except('database'))
-      mysql2_client.query("CREATE DATABASE IF NOT EXISTS #{self.database_opts['database']}")
-      self.sequel = Sequel.connect(self.database_opts)
+
+      # sqlite dont support regular creating database in mysql style
+      self.sequel = if (self.database_opts['adapter'].match(/sqlite/) && self.database_opts['database'].match(/\A:memory:\Z/)) # only for test envrionment
+        Sequel.sqlite
+      else
+        # create database, copied from http://stackoverflow.com/a/14435522/595618
+        require 'mysql2'
+        mysql2_client = Mysql2::Client.new(self.database_opts.except('database'))
+        mysql2_client.query("CREATE DATABASE IF NOT EXISTS #{self.database_opts['database']}")
+        Sequel.connect(self.database_opts)
+      end
 
       # 初始化键值model
       ["#{self.tablename_default_pre}_single_kvs", "#{self.tablename_default_pre}_single_kv_histories"].each do |tn|
         Utils.setup_pattern_table_and_model tn
       end
+
       return self
     end
 
@@ -101,7 +109,7 @@ module Statlysis
                           :group_by_columns => [],
                           :group_concat_columns => []
 
-      opts.each {|k, v| opts[k] = v.map(&:to_sym) if k.to_s.match(/column/) } # Sequel use symbol as column names
+      opts.each {|k, v| opts[k] = v.map(&:to_sym) if k.to_s.match(/_columns/) } # Sequel use symbol as column names
 
       # e.g. convert [:user_id] to [{:column_name => :user_id, :type => :integer}]
       if (opts[:group_by_columns].first || {})[:type].blank?

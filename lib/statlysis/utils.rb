@@ -39,6 +39,8 @@ module Statlysis
         Array(name).map {|s| s.to_s.gsub('_','') }.reject {|s| s.blank? }.join('_').downcase
       end
 
+      def sha1_name name; Digest::SHA1.hexdigest Array(name).map(&:to_s).join end
+
     end
   end
 end
