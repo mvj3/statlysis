@@ -98,7 +98,7 @@ module Statlysis
     end
 
     def output
-      @output ||= (cron.group_by_columns.any? ? multiple_dimension_output : one_dimension_output)
+      @output ||= (cron.group_by_columns.any? ? multiple_dimensions_output : one_dimension_output)
     end
 
     protected
@@ -130,4 +130,4 @@ end
 
 
 require 'statlysis/cron/timely/one_dimension'
-require 'statlysis/cron/timely/multiple_dimension'
+require 'statlysis/cron/timely/multiple_dimensions'
