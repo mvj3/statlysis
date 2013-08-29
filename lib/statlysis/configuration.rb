@@ -33,6 +33,9 @@ module Statlysis
       else
         raise "Statlysis#set_database only support symbol or hash params"
       end
+      # create database, copied from http://stackoverflow.com/a/14435522/595618
+      mysql2_client = Mysql2::Client.new(self.database_opts.except('database'))
+      mysql2_client.query("CREATE DATABASE IF NOT EXISTS #{self.database_opts['database']}")
       self.sequel = Sequel.connect(self.database_opts)
 
       # 初始化键值model
