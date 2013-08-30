@@ -45,7 +45,7 @@ module Statlysis
       if not Statlysis.sequel.table_exists?(cron.stat_table_name)
         Statlysis.sequel.transaction do
           Statlysis.sequel.create_table cron.stat_table_name, DefaultTableOpts do
-            primary_key :id
+            primary_key :id # Add one column at least in this block to avoid `SQLite3::SQLException: near ")": syntax error (Sequel::DatabaseError)`
           end
           Statlysis.sequel.add_column   cron.stat_table_name, :t, DateTime if cron.time_column? # alias for :time
 
