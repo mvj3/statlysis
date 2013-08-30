@@ -68,6 +68,11 @@ Q: Why do you recommend using multiple collections to store logs rather than a s
 A: MongoDB can effectively reuse space freed by removing entire collections without leading to data fragmentation, see details at http://docs.mongodb.org/manual/use-cases/storing-log-data/#multiple-collections-single-database
 
 
+Q: In Mongodb, why use MapReduce instead of Aggregation?
+
+A: The result of aggregation pipeline is a document and is subject to the BSON Document size limit, which is currently 16 megabytes, see more details at http://docs.mongodb.org/manual/core/aggregation-pipeline/#pipeline
+
+
 Copyright
 -----------------------------------------------
 MIT. David Chen at eoe.cn.
