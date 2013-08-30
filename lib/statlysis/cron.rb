@@ -72,6 +72,7 @@ module Statlysis
         false
       end
     end
+    def time_column?; !!@time_column end
 
   end
 

@@ -48,13 +48,15 @@ module Statlysis
           # TODO Add cron.source_where_array before count_columns
           count_columns = [:timely_c, :totally_c] # alias for :count
           count_columns.each {|w| Statlysis.sequel.add_column cron.stat_table_name, w, Integer }
-          index_column_names = [:t] + count_columns
-          index_column_names_name = Utils.sha1_name index_column_names.join("_") # index name length should not larger than 64
+          index_column_names = count_columns
+          index_column_names = [:t] + count_columns if cron.time_column?
 
           # Fix there should be uniq index name between tables
           # `SQLite3::SQLException: index t_timely_c_totally_c already exists (Sequel::DatabaseError)`
           if not Statlysis.config.is_skip_database_index
-            Statlysis.sequel.add_index cron.stat_table_name, index_column_names, :name => index_column_names_name
+            Statlysis.sequel.add_index cron.stat_table_name,
+                                       index_column_names,
+                                       :name => Utils.sha1_name(index_column_names.join("_")) # index name length should not larger than 64
           end
         end
       end
