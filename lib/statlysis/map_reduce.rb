@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-require 'javascript/count'
+require 'statlysis/javascript/count'
 
 module Statlysis
   class MapReduce

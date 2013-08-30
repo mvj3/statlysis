@@ -62,8 +62,6 @@ module Statlysis
       TimeSeries.parse(timebegin..timeend, :unit => cron.time_unit)
     end
 
-    protected
-
     # 兼容采用整数类型作时间字段
     def is_time_column_integer?
       if is_activerecord?

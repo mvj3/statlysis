@@ -30,8 +30,10 @@ module Statlysis
 
           return {count: count};
         }"
+
         self
       end
+
     end
   end
 end

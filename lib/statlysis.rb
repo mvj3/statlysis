@@ -59,6 +59,7 @@ module Statlysis
 
     def daily; CronSet.new(Statlysis.config.day_crons) end
     def hourly; CronSet.new(Statlysis.config.hour_crons) end
+    def always; CronSet.new(Statlysis.config.always_crons) end
 
   end
 
@@ -68,6 +69,7 @@ require 'statlysis/utils'
 require 'statlysis/configuration'
 require 'statlysis/common'
 require 'statlysis/timeseries'
+require 'statlysis/map_reduce'
 require 'statlysis/clock'
 require 'statlysis/rake'
 require 'statlysis/cron'

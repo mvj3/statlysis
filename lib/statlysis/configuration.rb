@@ -57,9 +57,9 @@ module Statlysis
     def set_tablename_default_pre str; self.tablename_default_pre = str.to_s; return self end
     def check_set_database; raise "Please setup database first" if sequel.nil?  end
 
-    def daily  source, opts = {}; timely source, {:time_unit => :day }.merge(opts) end
+    def daily  source, opts = {}; timely source, {:time_unit => :day}.merge(opts) end
     def hourly source, opts = {}; timely source, {:time_unit => :hour}.merge(opts) end
-    def always source, opts = {}; timely source, {:time_unit => false}.merge(opts) end # IMPORTANT set :time_unit to false
+    def always source, opts = {}; timely source, {:time_unit => false, :time_column => false}.merge(opts) end # IMPORTANT set :time_unit to false
 
     # the real requirement is to compute lastest items group by special pattens, like user_id, url prefix, ...
     def lastest_visits source, opts

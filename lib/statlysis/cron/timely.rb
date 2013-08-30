@@ -17,15 +17,16 @@ module Statlysis
     def run
       (logger.info("#{cron.multiple_dataset.name} have no result!"); return false) if cron.output.blank?
 
-      raise "cron.output has no Enumerable" if cron.output.class.included_modules.include? Enumerable
+      raise "cron.output has no Enumerable" if not cron.output.class.included_modules.include? Enumerable
 
       # delete first in range
       unless cron.output.any?
         logger.info "没有数据"; return
       end
+
       num_i = 0; num_add = 999
       Statlysis.sequel.transaction do
-        cron.stat_model.where("t >= ? AND t <= ?", cron.output[0][:t], cron.output[-1][:t]).delete
+        cron.stat_model.where("t >= ? AND t <= ?", cron.output[0][:t], cron.output[-1][:t]).delete if cron.time_column?
         while !(_a = cron.output[num_i..(num_i+num_add)]).blank? do
           # batch insert all
           cron.stat_model.multi_insert _a
@@ -44,14 +45,19 @@ module Statlysis
       if not Statlysis.sequel.table_exists?(cron.stat_table_name)
         Statlysis.sequel.transaction do
           Statlysis.sequel.create_table cron.stat_table_name, DefaultTableOpts do
-            DateTime :t # alias for :time
+            primary_key :id
           end
+          Statlysis.sequel.add_column   cron.stat_table_name, :t, DateTime if cron.time_column? # alias for :time
 
           # TODO Add cron.source_where_array before count_columns
-          count_columns = [:timely_c, :totally_c] # alias for :count
-          count_columns.each {|w| Statlysis.sequel.add_column cron.stat_table_name, w, Integer }
-          index_column_names = count_columns
-          index_column_names = [:t] + count_columns if cron.time_column?
+          if cron.time_column?
+            count_columns = [:timely_c, :totally_c] # alias for :count
+            count_columns.each {|w| Statlysis.sequel.add_column cron.stat_table_name, w, Integer }
+            index_column_names = count_columns
+            index_column_names = [:t] + count_columns
+          else
+            Statlysis.sequel.add_column cron.stat_table_name, :c, Integer # alias for :count
+          end
 
           # Fix there should be uniq index name between tables
           # `SQLite3::SQLException: index t_timely_c_totally_c already exists (Sequel::DatabaseError)`
@@ -63,16 +69,8 @@ module Statlysis
         end
       end
 
-      # TODO reassign columns added recently
-      n = cron.stat_table_name.to_s.singularize.camelize
-      cron.stat_model = class_eval <<-MODEL, __FILE__, __LINE__+1
-        class ::#{n} < Sequel::Model;
-          self.set_dataset :#{cron.stat_table_name}
-        end
-        #{n}
-      MODEL
-
       # add sum columns
+      remodel
       sum_column_to_result_columns_hash.each do |_sum_col, _result_cols|
         _result_cols.each do |_result_col|
           if not cron.stat_model.columns.include?(_result_col)
@@ -83,22 +81,25 @@ module Statlysis
       end
 
       # add group_by columns & indexes
+      remodel
       if cron.group_by_columns.any?
         cron.group_by_columns.each do |_h|
           if not cron.stat_model.columns.include?(_h[:column_name])
             Statlysis.sequel.add_column cron.stat_table_name, _h[:column_name], _h[:type]
           end
         end
-        _group_by_columns_index_name = cron.group_by_columns.map {|i| i[:column_name] }.unshift :t
+        _group_by_columns_index_name = cron.group_by_columns.map {|i| i[:column_name] }
+        _group_by_columns_index_name = _group_by_columns_index_name.unshift :t if cron.time_column?
         Statlysis.sequel.add_index cron.stat_table_name, _group_by_columns_index_name, :name => Utils.sha1_name(_group_by_columns_index_name)
       end
 
       # add group_concat column
+      remodel
       if cron.group_concat_columns.any? && !cron.stat_model.columns.include?(:other_json)
         Statlysis.sequel.add_column cron.stat_table_name, :other_json, :text
       end
 
-      cron.stat_model
+      remodel
     end
 
     def output
@@ -125,6 +126,17 @@ module Statlysis
         end
         h
       end
+    end
+
+    private
+    def remodel
+      n = cron.stat_table_name.to_s.singularize.camelize
+      cron.stat_model = class_eval <<-MODEL, __FILE__, __LINE__+1
+        class ::#{n} < Sequel::Model;
+          self.set_dataset :#{cron.stat_table_name}
+        end
+        #{n}
+      MODEL
     end
 
 
