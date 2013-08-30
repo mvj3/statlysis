@@ -43,10 +43,8 @@ EoeLog.create
 
     collection_class = collection_class_name.constantize
     t = Time.zone.parse(date_str)
-    1.upto(day) do |i|
-      puts "#{month} #{day_range} #{day} #{i}" if ENV['DEBUG']
-      collection_class.create :t => (t.to_time+rand(60*60*24-1)).to_datetime, :url => '/'
-    end
+    values = (1..day).map {|i| (t.to_time+rand(60*60*24-1)).to_datetime }.sort.map {|i| {:t => i, :url => '/' }  }
+    collection_class.create values
 
     collection_class.count
   end
