@@ -5,6 +5,11 @@ module Statlysis
 
 
     # one dimension **must** have `time_column`, or there's nothing to do
+    #
+    # TODO add to FAQ
+    # * if you want to statistics one column through `group_by_columns`
+    # params, and dont need time column, then you could use `always` DSL.
+    #
     def one_dimension_output
       cron.time_range.map do |time|
         _hash = {:t => time, :timely_c => 0, :totally_c => 0}
