@@ -18,7 +18,7 @@ module Statlysis
     # TODO encapsulate Mongoid MapReduce in collection output mode
     # TODO support large dataset, e.g. a million.
     def multiple_dimensions_output_without_time_column
-      mr = Javascript::MultiDimensionalCount.new(*cron.group_by_columns.map {|i| i[:column_name] })
+      mr = Javascript::MultiDimensionalCount.new(cron)
 
       array = []
       cron.multiple_dataset.sources.each do |_source|
@@ -35,6 +35,9 @@ module Statlysis
                         end
       end
       array
+
+      # TODO support sum_columns
+      # support group_concat_columns
     end
 
 

@@ -10,7 +10,7 @@ class CodeGistMongoid
   include Mongoid::Timestamps
   field :id,          :type => Integer
   field :description, :type => String
-  field :user_id,     :type => DateTime
+  field :user_id,     :type => Integer
   field :author,      :type => String
   field :fav_count,   :type => Integer
 end
