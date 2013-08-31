@@ -10,8 +10,8 @@ module Statlysis
       when Fixnum, Integer # support array idx access
         self.to_a[pattern]
       else
-        CronSet.new(select do |cron_set|
-          cron_set.multiple_dataset.name.to_s.match Regexp.new(pattern.to_s)
+        CronSet.new(select do |cron|
+          cron.stat_table_name.match Regexp.new(pattern.to_s)
         end)
       end
     end
