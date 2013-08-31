@@ -39,15 +39,18 @@ module Statlysis
         # sum_init_values = "var #{sum_init_values};" if cron.sum_columns.any?
 
         group_concat_values_init_array = cron.group_concat_columns.map {|_group_concat_column| "reducedObject.#{_group_concat_column}_values = {};" }
+        # TODO BUG? group_concat最终的数目和group_by数目不一致，可能因为合并问题
         group_concat_values_process_array = cron.group_concat_columns.map do |_group_concat_column|
           "for (var k1 in v['#{_group_concat_column}_values']) {\n" +
           "  reducedObject.#{_group_concat_column}_values[k1] = reducedObject.#{_group_concat_column}_values[k1] || 0;\n" +
           "  reducedObject.#{_group_concat_column}_values[k1] += 1;\n" +
+          "//print(reducedObject.count, reducedObject.#{_group_concat_column}_values[k1]);\n" +
+          "//global.c = global.c || 0; global.c += 1; print(global.c);\n" +
           "};\n"
         end
-        group_concat_values_process_array += (_group_by_columns.map do |_group_by_column|
+        group_by_values_process_array = _group_by_columns.map do |_group_by_column|
           "reducedObject.#{_group_by_column} = v.#{_group_by_column};\n"
-        end)
+        end
 
         # emit value in map func should be the same structure as the
         # return value in reduce func, see more details in
@@ -60,6 +63,7 @@ module Statlysis
 
           values.forEach(function(v) {
             reducedObject.count += v['count'];
+            #{group_by_values_process_array.join}
             #{group_concat_values_process_array.join}
           });
 
