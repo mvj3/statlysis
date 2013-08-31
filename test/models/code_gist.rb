@@ -13,4 +13,5 @@ class CodeGistMongoid
   field :user_id,     :type => Integer
   field :author,      :type => String
   field :fav_count,   :type => Integer
+  field :category_id, :type => Integer
 end

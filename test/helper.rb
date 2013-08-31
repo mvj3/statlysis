@@ -38,6 +38,7 @@ csv = CSV.parse(File.read(File.expand_path('../data/code_gists_20130724.csv', __
 csv.each do |row|
   _h = row.to_hash.merge(:fav_count => rand(5).to_i)
   CodeGist.create! _h
+  _h[:category_id] = rand(10).to_i + 1
   CodeGistMongoid.create! _h
 end
 
@@ -47,6 +48,7 @@ Statlysis.setup do
 
   daily  CodeGist, :sum_columns => [:fav_count], :group_concat_columns => [:user_id]
   always CodeGistMongoid, :group_by_columns => [{:column_name => :author, :type => :string}], :group_concat_columns => [:user_id]
+  always CodeGistMongoid, :group_by_columns => [{:column_name => :author, :type => :string}, {:column_name => :category_id, :type => :integer}], :group_concat_columns => [:user_id]
 
   [EoeLog,
    EoeLog.where(:do => 3),
