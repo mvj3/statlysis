@@ -44,8 +44,6 @@ module Statlysis
           "for (var k1 in v['#{_group_concat_column}_values']) {\n" +
           "  reducedObject.#{_group_concat_column}_values[k1] = reducedObject.#{_group_concat_column}_values[k1] || 0;\n" +
           "  reducedObject.#{_group_concat_column}_values[k1] += 1;\n" +
-          "//print(reducedObject.count, reducedObject.#{_group_concat_column}_values[k1]);\n" +
-          "//global.c = global.c || 0; global.c += 1; print(global.c);\n" +
           "};\n"
         end
         group_by_values_process_array = _group_by_columns.map do |_group_by_column|
