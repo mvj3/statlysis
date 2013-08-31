@@ -11,7 +11,8 @@ module Statlysis
         self.to_a[pattern]
       else
         CronSet.new(select do |cron|
-          cron.stat_table_name.match Regexp.new(pattern.to_s)
+          reg = Regexp.new(pattern.to_s)
+          cron.stat_table_name.match(reg) || cron.multiple_dataset.name.to_s.match(reg)
         end)
       end
     end
