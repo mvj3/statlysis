@@ -35,7 +35,7 @@ module Statlysis
 
                           _h[:other_json] = {}
                           cron.group_concat_columns.each do |_group_concat_column|
-                            _h[:other_json][_group_concat_column] = v["#{_group_concat_column}_values"]
+                            _h[:other_json][_group_concat_column] = v["#{_group_concat_column}_values"].inject({}) {|_h2, i2| _h2[i2] ||= 0; _h2[i2] += 1; _h2 }
                           end
                           _h[:other_json] = _h[:other_json].to_json
 
