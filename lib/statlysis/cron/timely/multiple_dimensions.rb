@@ -26,18 +26,25 @@ module Statlysis
         array += _source.map_reduce(mr.map_func, mr.reduce_func)
                         .out(inline: 1) # TODO use replace mode
                         .to_a.map do |i|
-                          i['_id'].inject({}) do |_h, _i|
-                            _h[_i[0].to_sym] = _i[1]
-                            _h
-                          end.merge(
-                            :c => i['value']['count']
-                          )
+                          v = i['value']
+                          _h = {:c => v['count']}
+
+                          cron.group_by_columns.each do |_group_by_column|
+                            _h[_group_by_column[:column_name]] = v[_group_by_column[:column_name].to_s]
+                          end
+
+                          _h[:other_json] = {}
+                          cron.group_concat_columns.each do |_group_concat_column|
+                            _h[:other_json][_group_concat_column] = v["#{_group_concat_column}_values"]
+                          end
+                          _h[:other_json] = _h[:other_json].to_json
+
+                          _h
                         end
       end
       array
 
       # TODO support sum_columns
-      # support group_concat_columns
     end
 
 
