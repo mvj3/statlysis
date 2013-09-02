@@ -33,6 +33,7 @@ module Statlysis
       else
         raise "Statlysis#set_database only support symbol or hash params"
       end
+      raise "database_opts should not be blank" if self.database_opts.blank?
 
       # sqlite dont support regular creating database in mysql style
       self.sequel = if (self.database_opts['adapter'].match(/sqlite/) && self.database_opts['database'].match(/\A:memory:\Z/)) # only for test envrionment
