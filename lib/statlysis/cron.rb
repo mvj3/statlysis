@@ -71,6 +71,7 @@ module Statlysis
       end
     end
     def time_column?; !!@time_column end
+    def group_by_columns?; !!@group_by_columns.any? end
 
   end
 

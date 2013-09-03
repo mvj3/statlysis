@@ -19,14 +19,14 @@ module Statlysis
 
       raise "cron.output has no Enumerable" if not cron.output.class.included_modules.include? Enumerable
 
-      # delete first in range
-      unless cron.output.any?
-        logger.info "没有数据"; return
-      end
-
       num_i = 0; num_add = 999
       Statlysis.sequel.transaction do
+        # delete first in range
         cron.stat_model.where("t >= ? AND t <= ?", cron.output[0][:t], cron.output[-1][:t]).delete if cron.time_column?
+
+        # TODO partial delete
+        cron.stat_model.where("").delete if cron.group_by_columns?
+
         while !(_a = cron.output[num_i..(num_i+num_add)]).blank? do
           # batch insert all
           cron.stat_model.multi_insert _a
