@@ -25,14 +25,16 @@ module Statlysis
       self.default_time_columns = self.default_time_columns.uniq
     end
 
-    def set_database sym_or_hash
-      self.database_opts = if sym_or_hash.is_a? Symbol
-        YAML.load_file(Rails.root.join("config/database.yml"))[sym_or_hash.to_s]
-      elsif Hash
-        sym_or_hash
-      else
-        raise "Statlysis#set_database only support symbol or hash params"
-      end
+    def set_database obj
+      self.database_opts = case obj
+                           when Hash
+                             obj
+                           when Symbol, String
+                             YAML.load_file(Rails.root.join("config/database.yml"))[Rails.env].merge('database' => obj.to_s)
+                           else
+                             raise "Statlysis#set_database only support symbol or hash params"
+                           end
+
       raise "database_opts should not be blank" if self.database_opts.blank?
 
       # sqlite dont support regular creating database in mysql style

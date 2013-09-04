@@ -22,10 +22,11 @@ require 'statlysis'
 
 # load rails
 def Rails.root; Pathname.new(File.expand_path('../.', __FILE__)) end
+def Rails.env; 'development' end
 require 'sqlite3'
 
 # load ActiveRecord setup
-Statlysis.set_database :statlysis
+Statlysis.set_database ":memory:"
 Statlysis.config.is_skip_database_index = true
 ActiveRecord::Base.establish_connection(Statlysis.config.database_opts.merge("adapter" => "sqlite3"))
 Dir[File.expand_path("../migrate/*.rb", __FILE__).to_s].each { |f| require f }

@@ -4,6 +4,5 @@ production: &defaults
   encoding: utf8
   collation: utf8_general_ci
   database: ":memory:"
-statlysis:
+development:
   <<: *defaults
-#  database: statlysis
