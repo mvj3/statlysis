@@ -18,6 +18,12 @@ module Statlysis
     self.instance.send "tablename_default_pre=", "st"
     self.instance.send "is_skip_database_index=", false
 
+    DelegateMethods = [
+      :sequel, :set_database, :check_set_database,
+      :default_time_zone,
+      :set_tablename_default_pre, :tablename_default_pre
+    ]
+
     # 会在自动拼接统计数据库表名时去除这些时间字段
     def update_time_columns *columns
       self.default_time_columns ||= [:created_at, :updated_at]

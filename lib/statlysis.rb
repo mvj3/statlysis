@@ -20,34 +20,33 @@ require 'activerecord_idnamecache'
 module Rails; end
 
 require 'statlysis/constants'
+require 'statlysis/utils'
+require 'statlysis/configuration'
+require 'statlysis/common'
 
 module Statlysis
   class << self
     def setup &blk
       raise "Need to setup proc" if not blk
 
-      logger.info "Start to setup Statlysis"
+      logger.info "Start to setup Statlysis" if ENV['DEBUG']
       time_log do
         self.config.instance_exec(&blk)
       end
-      logger.info
     end
 
     def time_log text = nil
       t = Time.now
       logger.info text if text
       yield if block_given?
-      logger.info "Time spend #{(Time.now - t).round(2)} seconds."
-      logger.info "-" * 42
+      logger.info "Time spend #{(Time.now - t).round(2)} seconds." if ENV['DEBUG']
+      logger.info "-" * 42 if ENV['DEBUG']
     end
 
     # delagate config methods to Configuration
     def config; Configuration.instance end
     require 'active_support/core_ext/module/delegation.rb'
-    [:sequel, :set_database, :check_set_database,
-     :default_time_zone,
-     :set_tablename_default_pre, :tablename_default_pre
-    ].each do |sym|
+    Configuration::DelegateMethods.each do |sym|
       delegate sym, :to => :config
     end
 
@@ -65,9 +64,6 @@ module Statlysis
 
 end
 
-require 'statlysis/utils'
-require 'statlysis/configuration'
-require 'statlysis/common'
 require 'statlysis/timeseries'
 require 'statlysis/map_reduce'
 require 'statlysis/clock'
