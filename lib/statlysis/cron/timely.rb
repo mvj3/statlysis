@@ -42,7 +42,6 @@ module Statlysis
       cron.stat_table_name = Utils.normalise_name cron.class.name.split("::")[-1], cron.multiple_dataset.name, cron.source_where_array, cron.group_by_columns.map {|i| i[:column_name] }, TimeUnitToTableSuffixHash[cron.time_unit]
       raise "mysql only support table_name in 64 characters, the size of '#{cron.stat_table_name}' is #{cron.stat_table_name.to_s.size}. please set cron.stat_table_name when you create a Cron instance" if cron.stat_table_name.to_s.size > 64
 
-      _group_by_columns_index_name = []
 
       # create basic unchangeable table structure
       if not Statlysis.sequel.table_exists?(cron.stat_table_name)
@@ -60,19 +59,16 @@ module Statlysis
             Statlysis.sequel.add_column cron.stat_table_name, :c, Integer # alias for :count
           end
 
-          # add group_by columns & indexes
-          remodel
-          if cron.group_by_columns.any?
-            cron.group_by_columns.each do |_h|
-              if not cron.stat_model.columns.include?(_h[:column_name])
-                _h[:type] = SymbolToClassInDataType[_h[:type]] if _h[:type].is_a?(Symbol) # && (Statlysis.sequel.opts[:adapter] == :sqlite)
-                Statlysis.sequel.add_column cron.stat_table_name, _h[:column_name], _h[:type]
-              end
-            end
-            _group_by_columns_index_name = cron.group_by_columns.map {|i| i[:column_name] }
-            _group_by_columns_index_name = _group_by_columns_index_name.unshift :t if cron.time_column?
+        end
+      end
+      # add group_by columns & indexes
+      remodel
+      if cron.group_by_columns.any?
+        cron.group_by_columns.each do |_h|
+          if not cron.stat_model.columns.include?(_h[:column_name])
+            _h[:type] = SymbolToClassInDataType[_h[:type]] if _h[:type].is_a?(Symbol) # && (Statlysis.sequel.opts[:adapter] == :sqlite)
+            Statlysis.sequel.add_column cron.stat_table_name, _h[:column_name], _h[:type]
           end
-
         end
       end
 
@@ -89,13 +85,25 @@ module Statlysis
 
       # Fix there should be uniq index name between tables
       # `SQLite3::SQLException: index t_timely_c_totally_c already exists (Sequel::DatabaseError)`
+      _group_by_columns_index_name = cron.group_by_columns.map {|i| i[:column_name] }
+      _truncated_columns = _group_by_columns_index_name.dup # only String column
+      _group_by_columns_index_name = _group_by_columns_index_name.unshift :t if cron.time_column?
+      # TODO use https://github.com/german/redis_orm to support full string indexes
       if !Statlysis.config.is_skip_database_index && _group_by_columns_index_name.any?
+        mysql_per_column_length_limit_in_one_index = (1000 / 3.0 / _group_by_columns_index_name.size.to_f).to_i
+        index_columns_str = _group_by_columns_index_name.map {|s| _truncated_columns.include?(s) ? "#{s.to_s}(#{mysql_per_column_length_limit_in_one_index})" : s.to_s }.join(", ")
+        index_columns_str = "(#{index_columns_str})"
         begin
+          # NOTE mysql indexes key length limit is 1000 bytes
+          cron.stat_model.dataset.with_sql("CREATE INDEX #{Utils.sha1_name(_group_by_columns_index_name)} ON #{cron.stat_table_name} #{index_columns_str};").to_a
+=begin
+          # NOTE dont support custom index columns sql
           Statlysis.sequel.add_index cron.stat_table_name,
-                                     _group_by_columns_index_name,
-                                     :name => Utils.sha1_name(_group_by_columns_index_name)[0..11] # index name length should not larger than 64
+                                     index_columns_str, # e.g. => ["room(166)", "lesson(166)"]
+                                     :name => Utils.sha1_name(_group_by_columns_index_name) # index name length should not larger than 64
+=end
         rescue => e
-          raise e if not e.to_s.match(/exists/)
+          raise e if not e.inspect.match(/exists|duplicate/i)
         end
       end
 
