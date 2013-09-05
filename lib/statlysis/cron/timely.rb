@@ -96,12 +96,6 @@ module Statlysis
         begin
           # NOTE mysql indexes key length limit is 1000 bytes
           cron.stat_model.dataset.with_sql("CREATE INDEX #{Utils.sha1_name(_group_by_columns_index_name)} ON #{cron.stat_table_name} #{index_columns_str};").to_a
-=begin
-          # NOTE dont support custom index columns sql
-          Statlysis.sequel.add_index cron.stat_table_name,
-                                     index_columns_str, # e.g. => ["room(166)", "lesson(166)"]
-                                     :name => Utils.sha1_name(_group_by_columns_index_name) # index name length should not larger than 64
-=end
         rescue => e
           raise e if not e.inspect.match(/exists|duplicate/i)
         end
