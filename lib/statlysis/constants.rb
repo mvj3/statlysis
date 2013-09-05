@@ -8,4 +8,15 @@ module Statlysis
   DefaultTableOpts = {:charset => "utf8", :collate => "utf8_general_ci", :engine => "MyISAM"}
 
   DefaultNotImplementWrongMessage = "Not implement yet, please config it by subclass".freeze
+
+  SymbolToClassInDataType = {
+    :string =>   String,
+    :datetime => DateTime,
+    :time =>     Time,
+    :integer =>  Integer,
+    :float =>    Float,
+    :text =>     String
+  }
+
+
 end

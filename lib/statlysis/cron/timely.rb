@@ -42,6 +42,9 @@ module Statlysis
       cron.stat_table_name = Utils.normalise_name cron.class.name.split("::")[-1], cron.multiple_dataset.name, cron.source_where_array, cron.group_by_columns.map {|i| i[:column_name] }, TimeUnitToTableSuffixHash[cron.time_unit]
       raise "mysql only support table_name in 64 characters, the size of '#{cron.stat_table_name}' is #{cron.stat_table_name.to_s.size}. please set cron.stat_table_name when you create a Cron instance" if cron.stat_table_name.to_s.size > 64
 
+      _group_by_columns_index_name = []
+
+      # create basic unchangeable table structure
       if not Statlysis.sequel.table_exists?(cron.stat_table_name)
         Statlysis.sequel.transaction do
           Statlysis.sequel.create_table cron.stat_table_name, DefaultTableOpts do
@@ -49,23 +52,27 @@ module Statlysis
           end
           Statlysis.sequel.add_column   cron.stat_table_name, :t, DateTime if cron.time_column? # alias for :time
 
-          # TODO Add cron.source_where_array before count_columns
+          # add count columns
           if cron.time_column?
             count_columns = [:timely_c, :totally_c] # alias for :count
             count_columns.each {|w| Statlysis.sequel.add_column cron.stat_table_name, w, Integer }
-            index_column_names = count_columns
-            index_column_names = [:t] + count_columns
           else
             Statlysis.sequel.add_column cron.stat_table_name, :c, Integer # alias for :count
           end
 
-          # Fix there should be uniq index name between tables
-          # `SQLite3::SQLException: index t_timely_c_totally_c already exists (Sequel::DatabaseError)`
-          if not Statlysis.config.is_skip_database_index
-            Statlysis.sequel.add_index cron.stat_table_name,
-                                       index_column_names,
-                                       :name => Utils.sha1_name(index_column_names.join("_")) # index name length should not larger than 64
+          # add group_by columns & indexes
+          remodel
+          if cron.group_by_columns.any?
+            cron.group_by_columns.each do |_h|
+              if not cron.stat_model.columns.include?(_h[:column_name])
+                _h[:type] = SymbolToClassInDataType[_h[:type]] if _h[:type].is_a?(Symbol) # && (Statlysis.sequel.opts[:adapter] == :sqlite)
+                Statlysis.sequel.add_column cron.stat_table_name, _h[:column_name], _h[:type]
+              end
+            end
+            _group_by_columns_index_name = cron.group_by_columns.map {|i| i[:column_name] }
+            _group_by_columns_index_name = _group_by_columns_index_name.unshift :t if cron.time_column?
           end
+
         end
       end
 
@@ -80,17 +87,16 @@ module Statlysis
         end
       end
 
-      # add group_by columns & indexes
-      remodel
-      if cron.group_by_columns.any?
-        cron.group_by_columns.each do |_h|
-          if not cron.stat_model.columns.include?(_h[:column_name])
-            Statlysis.sequel.add_column cron.stat_table_name, _h[:column_name], _h[:type]
-          end
+      # Fix there should be uniq index name between tables
+      # `SQLite3::SQLException: index t_timely_c_totally_c already exists (Sequel::DatabaseError)`
+      if !Statlysis.config.is_skip_database_index && _group_by_columns_index_name.any?
+        begin
+          Statlysis.sequel.add_index cron.stat_table_name,
+                                     _group_by_columns_index_name,
+                                     :name => Utils.sha1_name(_group_by_columns_index_name)[0..11] # index name length should not larger than 64
+        rescue => e
+          raise e if not e.to_s.match(/exists/)
         end
-        _group_by_columns_index_name = cron.group_by_columns.map {|i| i[:column_name] }
-        _group_by_columns_index_name = _group_by_columns_index_name.unshift :t if cron.time_column?
-        Statlysis.sequel.add_index cron.stat_table_name, _group_by_columns_index_name, :name => Utils.sha1_name(_group_by_columns_index_name)
       end
 
       # add group_concat column
