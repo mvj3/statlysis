@@ -85,7 +85,7 @@ module Statlysis
 
       # Fix there should be uniq index name between tables
       # `SQLite3::SQLException: index t_timely_c_totally_c already exists (Sequel::DatabaseError)`
-      _group_by_columns_index_name = cron.group_by_columns.map {|i| i[:column_name] }
+      _group_by_columns_index_name = cron.group_by_columns.reject {|i| i[:no_index] }.map {|i| i[:column_name] }
       _truncated_columns = _group_by_columns_index_name.dup # only String column
       _group_by_columns_index_name = _group_by_columns_index_name.unshift :t if cron.time_column?
       # TODO use https://github.com/german/redis_orm to support full string indexes
