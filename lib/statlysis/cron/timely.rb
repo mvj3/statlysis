@@ -107,6 +107,18 @@ module Statlysis
         Statlysis.sequel.add_column cron.stat_table_name, :other_json, :text
       end
 
+      # add access to group_concat values in other_json
+      remodel.class_eval do
+        define_method("other_json_hash") do
+          @__other_json_hash_cache ||= (JSON.parse(self.other_json) rescue {})
+        end
+        cron.group_concat_columns.each do |_group_concat_column|
+          define_method("#{_group_concat_column}_values") do
+            self.other_json_hash[_group_concat_column.to_s]
+          end
+        end
+      end
+
       remodel
     end
 
