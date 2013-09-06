@@ -63,6 +63,7 @@ module Statlysis
       end
       # add group_by columns & indexes
       remodel
+      cron.stat_model.cron = cron
       if cron.group_by_columns.any?
         cron.group_by_columns.each do |_h|
           if not cron.stat_model.columns.include?(_h[:column_name])
@@ -154,6 +155,8 @@ module Statlysis
       cron.stat_model = class_eval <<-MODEL, __FILE__, __LINE__+1
         class ::#{n} < Sequel::Model;
           self.set_dataset :#{cron.stat_table_name}
+
+          cattr_accessor :cron
         end
         #{n}
       MODEL
