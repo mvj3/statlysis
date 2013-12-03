@@ -8,6 +8,8 @@ module Statlysis
     # feature is a string
     def initialize feature, default_time
       raise "Please assign default_time params" if not default_time
+
+      # init table & model
       cron.stat_table_name = [Statlysis.tablename_default_pre, 'clocks'].compact.join("_")
       unless Statlysis.sequel.table_exists?(cron.stat_table_name)
         Statlysis.sequel.create_table cron.stat_table_name, DefaultTableOpts.merge(:engine => "InnoDB") do
@@ -19,6 +21,8 @@ module Statlysis
       end
       h = Utils.setup_pattern_table_and_model cron.stat_table_name
       cron.stat_model = h[:model]
+
+      # init default_time
       cron.clock = cron.stat_model.find_or_create(:feature => feature)
       cron.clock.update :t => default_time if cron.current.nil?
       cron

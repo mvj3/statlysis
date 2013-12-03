@@ -162,10 +162,9 @@ module Statlysis
       MODEL
     end
 
-
-
   end
 end
+
 
 
 require 'statlysis/cron/timely/one_dimension'
