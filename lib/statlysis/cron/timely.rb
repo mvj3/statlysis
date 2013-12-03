@@ -15,6 +15,9 @@ module Statlysis
 
     # 设置数据源，并保存结果入数据库
     def run
+      # setup a clock to record the last updated
+      @clock = Clock.new "last_updated_at__#{@stat_table_name}", DateTime.now
+
       (logger.info("#{cron.multiple_dataset.name} have no result!"); return false) if cron.output.blank?
 
       raise "cron.output has no Enumerable" if not cron.output.class.included_modules.include? Enumerable
@@ -33,6 +36,9 @@ module Statlysis
           num_i += (num_add + 1)
         end
       end
+
+      # record last executed time
+      clock.update
 
       return self
     end

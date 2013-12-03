@@ -75,8 +75,7 @@ A: The result of aggregation pipeline is a document and is subject to the BSON D
 
 Copyright
 -----------------------------------------------
-MIT. David Chen at eoe.cn.
-
+MIT. David Chen at eoe.cn, sunshine-library .
 
 Related
 -----------------------------------------------

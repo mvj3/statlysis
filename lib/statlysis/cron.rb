@@ -3,6 +3,7 @@
 module Statlysis
   class Cron
     attr_reader :multiple_dataset, :source_type, :time_column, :time_unit, :time_zone
+    attr_reader :clock
     include Common
 
     def initialize s, opts = {}

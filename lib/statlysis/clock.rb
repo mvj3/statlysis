@@ -28,7 +28,7 @@ module Statlysis
       cron
     end
 
-    def update time
+    def update time = DateTime.now
       time = DateTime.now if time == DateTime1970
       return false if time && (time < cron.current)
       cron.clock.update :t => time
