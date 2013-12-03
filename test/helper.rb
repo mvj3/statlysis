@@ -62,5 +62,6 @@ Statlysis.setup do
   cron1 = Statlysis.daily['mul'][1]
   cron2 = Statlysis.daily['cod'][0]
   cron3 = Statlysis.always['code']['mongoid'][0]
-  require 'pry-debugger';binding.pry
+  (require 'pry-debugger';binding.pry) if ENV['DEBUG']
+
 end

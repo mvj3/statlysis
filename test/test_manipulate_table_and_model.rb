@@ -2,7 +2,7 @@
 
 require 'helper'
 
-class TestStatlysis < Test::Unit::TestCase
+class TestManipulateTableAndModel < Test::Unit::TestCase
   def setup
     @old_datetime = Time.zone.parse("20130105")
   end
