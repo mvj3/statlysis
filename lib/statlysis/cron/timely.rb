@@ -154,8 +154,7 @@ module Statlysis
 
     private
     def remodel
-      # setup a clock to record the last updated
-      @clock ||= Clock.new "last_updated_at__#{cron.stat_table_name}", DateTime.now
+      @clock ||= reclock
 
       n = cron.stat_table_name.to_s.singularize.camelize
       cron.stat_model = class_eval <<-MODEL, __FILE__, __LINE__+1
@@ -166,6 +165,11 @@ module Statlysis
         end
         #{n}
       MODEL
+    end
+
+    def reclock
+      # setup a clock to record the last updated
+      @clock = Clock.new "last_updated_at__#{cron.stat_table_name}"
     end
 
   end
