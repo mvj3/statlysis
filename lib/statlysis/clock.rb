@@ -33,7 +33,9 @@ module Statlysis
       cron.clock.update :t => time
     end
 
-    def current; cron.clock.t end
+    # ensure the time is newest
+    def current; cron.stat_model.find(id: clock.id).t end
+
   end
 
 end
