@@ -1,8 +1,4 @@
 # encoding: UTF-8
-#
-# 问: 为什么要ETL为简单几维的数据集，以方便statlysis统计？
-# 答: 用户最后能看到和理解的也就是几维的分析图表而已，从用户理解出发。
-#
 
 Statlysis.setup do
   set_database :local_statistic
