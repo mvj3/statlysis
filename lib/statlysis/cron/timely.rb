@@ -93,7 +93,7 @@ module Statlysis
       _truncated_columns = _group_by_columns_index_name.dup # only String column
       _group_by_columns_index_name = _group_by_columns_index_name.unshift :t if cron.time_column?
       # TODO use https://github.com/german/redis_orm to support full string indexes
-      if !Statlysis.config.is_skip_database_index && _group_by_columns_index_name.any?
+      if !Statlysis.configuration.is_skip_database_index && _group_by_columns_index_name.any?
         mysql_per_column_length_limit_in_one_index = (1000 / 3.0 / _group_by_columns_index_name.size.to_f).to_i
         index_columns_str = _group_by_columns_index_name.map {|s| _truncated_columns.include?(s) ? "#{s.to_s}(#{mysql_per_column_length_limit_in_one_index})" : s.to_s }.join(", ")
         index_columns_str = "(#{index_columns_str})"

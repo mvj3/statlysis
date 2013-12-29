@@ -31,7 +31,7 @@ module Statlysis
 
       logger.info "Start to setup Statlysis" if ENV['DEBUG']
       time_log do
-        self.config.instance_exec(&blk)
+        self.configuration.instance_exec(&blk)
       end
     end
 
@@ -44,10 +44,10 @@ module Statlysis
     end
 
     # delagate config methods to Configuration
-    def config; Configuration.instance end
+    def configuration; Configuration.instance end
     require 'active_support/core_ext/module/delegation.rb'
     Configuration::DelegateMethods.each do |sym|
-      delegate sym, :to => :config
+      delegate sym, :to => :configuration
     end
 
     attr_accessor :logger
@@ -56,9 +56,9 @@ module Statlysis
     def source_to_database_type; @_source_to_database_type ||= {} end
 
     # 代理访问 各个时间类型的 crons
-    def daily; CronSet.new(Statlysis.config.day_crons) end
-    def hourly; CronSet.new(Statlysis.config.hour_crons) end
-    def always; CronSet.new(Statlysis.config.always_crons) end
+    def daily; CronSet.new(Statlysis.configuration.day_crons) end
+    def hourly; CronSet.new(Statlysis.configuration.hour_crons) end
+    def always; CronSet.new(Statlysis.configuration.always_crons) end
 
   end
 

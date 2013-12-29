@@ -28,8 +28,8 @@ require 'sqlite3'
 
 # load ActiveRecord setup
 Statlysis.set_database ":memory:"
-Statlysis.config.is_skip_database_index = true
-ActiveRecord::Base.establish_connection(Statlysis.config.database_opts.merge("adapter" => "sqlite3"))
+Statlysis.configuration.is_skip_database_index = true
+ActiveRecord::Base.establish_connection(Statlysis.configuration.database_opts.merge("adapter" => "sqlite3"))
 Dir[File.expand_path("../migrate/*.rb", __FILE__).to_s].each { |f| require f }
 Dir[File.expand_path("../models/*.rb", __FILE__).to_s].each { |f| require f }
 
