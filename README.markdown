@@ -1,6 +1,13 @@
 Statlysis
 ===============================================
-Statistical & Analysis in Ruby DSL
+Statistical and analysis in Ruby DSL, just as simple as SQL operations in ActiveRecord.
+
+手把手操作示例见 http://mvj3.github.io/statlysis/showterm.html
+
+成功案例
+-----------------------------------------------
+* eoe.cn各子网站的页面访问统计，和包含多个条件的数据库表每日数据统计。 [示例配置文件](https://github.com/mvj3/statlysis/blob/master/examples/eoecn.rb)
+* 阳光书屋的学习提高班的关于做题情况的统计分析。 [示例配置文件](https://github.com/mvj3/statlysis/blob/master/examples/sunshinelibrary.rb)
 
 Usage
 -----------------------------------------------
@@ -35,7 +42,7 @@ Statlysis.daily[/name_regexp/] # => return matched daily crons
 ### process
 
 ```irb
-[23] pry(#<Statlysis::Configuration>)> Statlysis.daily['multi'].first
+[23] pry(#<Statlysis::Configuration>)> Statlysis.daily['multi'].first.output
 ```
 
 Features
@@ -71,11 +78,6 @@ A: MongoDB can effectively reuse space freed by removing entire collections with
 Q: In Mongodb, why use MapReduce instead of Aggregation?
 
 A: The result of aggregation pipeline is a document and is subject to the BSON Document size limit, which is currently 16 megabytes, see more details at http://docs.mongodb.org/manual/core/aggregation-pipeline/#pipeline
-
-成功案例
------------------------------------------------
-* eoe.cn各子网站的页面访问统计，包含多个条件的数据库表每日数据统计。 [示例配置文件](https://github.com/mvj3/statlysis/blob/master/examples/eoecn.rb)
-* 阳光书屋的学习提高班的关于做题情况的统计分析。 [示例配置文件](https://github.com/mvj3/statlysis/blob/master/examples/sunshinelibrary.rb)
 
 
 Copyright
