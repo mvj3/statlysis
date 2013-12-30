@@ -4,13 +4,13 @@ $:.push File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
   s.name          = 'statlysis'
-  s.version       = '0.0.5'
-  s.date          = '2013-12-05'
+  s.version       = '0.0.7'
+  s.date          = '2013-12-30'
   s.summary       = File.read("README.markdown").split(/===+/)[1].strip.split("\n")[0]
   s.description   = s.summary
   s.authors       = ["David Chen"]
   s.email         = 'mvjome@gmail.com'
-  s.homepage      = 'https://github.com/SunshineLibrary/statlysis'
+  s.homepage      = 'https://github.com/mvj3/statlysis'
   s.license       = 'MIT'
 
   s.files         = `git ls-files`.split("\n")
