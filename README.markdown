@@ -38,8 +38,14 @@ MongoDB作为NoSQL数据库，它是为 **单collection** 里读写 **单个记�
 
 Features
 -----------------------------------------------
-* 支持Mongoid和ActiveRecord两种ORM，其中Mongoid以MapReduce方式统计，ActiveRecord基于纯SQL操作。
-* Support time column that stored as integer.
+1. 支持Mongoid和ActiveRecord两种ORM，其中Mongoid以MapReduce方式统计，ActiveRecord基于纯SQL操作。
+2. 支持单行DSL配置，链式风格。
+3. 支持按日期分割的相同结构多表的统计。
+4. 提供依据统计需求动态配置以ORM形式存在的结果表，并支持条件查询。
+5. 支持任意维度统计，其中时间维度可选。
+6. 单次统计里支持多个GroupConcat字段。
+7. 支持最近统计的时间。
+8. 支持以整数类型存储的时间字段，以兼容PHP社区的特别约定。
 
 
 Statistical Process
