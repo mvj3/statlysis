@@ -1,4 +1,4 @@
-require File.join(ENV['HOME'], 'utils/ruby/irb') rescue nil
+require File.join(ENV['HOME'], 'github/mvj3/utils/ruby/irb') rescue nil
 require 'rubygems'
 require 'bundler'
 begin
@@ -44,23 +44,11 @@ csv.each do |row|
   CodeGistMongoid.create! _h
 end
 
-
-
-
-
-
-
-
-
+def DateTime.now
+  return DateTime.parse("20130901")
+end
 
 (require 'pry-debugger';binding.pry) if ENV['DEBUG']
-
-
-
-
-
-
-
 
 
 Statlysis.setup do

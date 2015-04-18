@@ -17,7 +17,7 @@ class TestMapReduce < Test::Unit::TestCase
 
     # 测试更新最后执行时间的时钟
     # TODO 可能移到其他地方
-    assert((cron.clock.current - before_time) > 0)
+    assert((cron.clock.current - before_time) >= 0) # compact with fake time
 
     assert_equal cron.output.detect {|h| h[:author] == 'mvj3' }[:c].to_i, cron.multiple_dataset.sources.first.where(:author => 'mvj3').count
   end

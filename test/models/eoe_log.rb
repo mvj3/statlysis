@@ -32,9 +32,9 @@ EoeLog.create
     # NOTE: Object.const_set(name, Class.new {}) cause failed with error 16256: "Invalid ns [statlysis_mongoid_test.]",
     # and cann't Mongoid.create data
     eval("
-      class #{collection_class_name}
+      class ::#{collection_class_name}
         include Mongoid::Document
-        self.default_collection_name = #{collection_name.to_json}
+        store_in collection: #{collection_name.to_json}
         field :t, :type => DateTime
         field :url, :type => String
         index({t: -1}, {:background => true})
