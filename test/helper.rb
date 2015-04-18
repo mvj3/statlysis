@@ -1,4 +1,3 @@
-require File.join(ENV['HOME'], 'github/mvj3/utils/ruby/irb') rescue nil
 require 'rubygems'
 require 'bundler'
 begin
