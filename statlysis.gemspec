@@ -29,13 +29,12 @@ Gem::Specification.new do |s|
   s.add_dependency "activesupport"
   s.add_dependency "sequel"
   s.add_dependency 'only_one_rake'
-  s.add_dependency 'json', '1.8.0'
   s.add_dependency 'bson_ext'
   s.add_dependency 'origin'
   s.add_dependency 'short_inspect'
 
   s.add_development_dependency 'sqlite3'
-  s.add_development_dependency 'pry-debugger'
+  s.add_development_dependency 'pry-byebug'
   s.add_development_dependency 'guard-test'
 
 end
