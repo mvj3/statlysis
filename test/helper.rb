@@ -11,7 +11,7 @@ require 'test/unit'
 
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 $LOAD_PATH.unshift File.dirname(__FILE__) # test dirs
-require 'pry-debugger'
+require 'pry-byebug'
 
 # load mongoid setup
 require 'mongoid'
@@ -47,7 +47,7 @@ def DateTime.now
   return DateTime.parse("20130901")
 end
 
-(require 'pry-debugger';binding.pry) if ENV['DEBUG']
+(require 'pry-byebug';binding.pry) if ENV['DEBUG']
 
 
 Statlysis.setup do
