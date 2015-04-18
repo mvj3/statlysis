@@ -1,4 +1,4 @@
-Statlysis
+Statlysis [![Build Status](https://travis-ci.org/mvj3/statlysis.png)](https://travis-ci.org/mvj3/statlysis)
 ===============================================
 Statistical and analysis in Ruby DSL, just as simple as SQL operations in ActiveRecord.
 
