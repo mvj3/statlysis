@@ -4,8 +4,8 @@ $:.push File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
   s.name          = 'statlysis'
-  s.version       = '0.1.0'
-  s.date          = '2015-04-19'
+  s.version       = '0.1.1'
+  s.date          = '2015-11-02'
   s.summary       = File.read("README.markdown").split(/===+/)[1].strip.split("\n")[0]
   s.description   = s.summary
   s.authors       = ["David Chen"]
