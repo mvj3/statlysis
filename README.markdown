@@ -31,7 +31,7 @@ statlysis认为数据源一定要被ETL为简单几个维度的单层数据集�
 #### 尽量采用MongoDB来作为统计数据源
 MongoDB作为NoSQL数据库，它是为 **单collection** 里读写 **单个记录的整体** 而优化设计的，并支持MapReduce并发来加快统计过程。
 
-成功案例
+Success cases
 -----------------------------------------------
 * eoe.cn各子网站的页面访问统计，和包含多个条件的数据库表每日数据统计，详情见 [示例配置文件](https://github.com/mvj3/statlysis/blob/master/examples/eoecn.rb) ，按日期维度分。
 * 阳光书屋的学习提高班的关于做题情况的统计分析，详情见 [示例配置文件](https://github.com/mvj3/statlysis/blob/master/examples/sunshinelibrary.rb) ，按班级维度分。
@@ -78,6 +78,12 @@ TODO
 * statistic query api in Ruby and HTTP
 * Interacting with Javascript charting library, e.g. Highcharts, D3.
 
+Test
+-----------------------------------------------
+```bash
+bundle install
+bundle exec rake
+```
 
 Copyright
 -----------------------------------------------

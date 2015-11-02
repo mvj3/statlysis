@@ -3,7 +3,8 @@ production:
   # This starts the session configuration settings. You may have as
   # many sessions as you like, but you must have at least 1 named
   # 'default'.
-  sessions:
+  # sessions:  # old API 20151102
+  clients:
     # Define the default session.
     default:
       # A session can have any number of hosts. Usually 1 for a single
