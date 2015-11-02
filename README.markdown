@@ -1,6 +1,6 @@
 Statlysis [![Build Status](https://travis-ci.org/mvj3/statlysis.png)](https://travis-ci.org/mvj3/statlysis) [![Documentation badges](http://inch-ci.org/github/mvj3/statlysis.svg?branch=master)](https://inch-ci.org/github/mvj3/statlysis)
 ===============================================
-Statistical and analysis in Ruby DSL, just as simple as SQL operations in ActiveRecord.
+Statistic and analysis in Ruby DSL, just as simple as SQL operations in ActiveRecord.
 
 Usage
 -----------------------------------------------
@@ -48,9 +48,9 @@ Features
 8. 支持最近统计的时间。
 9. 支持以整数类型存储的时间字段，以兼容PHP社区的特别约定。
 
-Statistical Process
+Statistic Process
 -----------------------------------------------
-1. Delete invalid statistical data, e.g. data in tomorrow
+1. Delete invalid statistic data, e.g. data in tomorrow
 2. Count data within the specified time by the dimensions
 3. Delete overlapping data, and insert new data
 
@@ -75,7 +75,7 @@ A: The result of aggregation pipeline is a document and is subject to the BSON D
 TODO
 -----------------------------------------------
 * Admin interface
-* statistical query api in Ruby and HTTP
+* statistic query api in Ruby and HTTP
 * Interacting with Javascript charting library, e.g. Highcharts, D3.
 
 
